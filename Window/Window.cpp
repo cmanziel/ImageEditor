@@ -230,31 +230,13 @@ void Window::TakeSnapshot()
         {
             point p = m_PointBuffer->GetGrid()[y][x];
 
-            color brush_color = m_Brush->GetColor();
-            color p_color;
+            unsigned int index = row_start + CHANNELS_PER_PIXEL * x + 1;
 
-            if (p.drawn)
-            {
-                p_color.r = brush_color.r;
-                p_color.g = brush_color.g;
-                p_color.b = brush_color.b;
-            }
-            else
-            {
-                p_color.r = 255;
-                p_color.g = 255;
-                p_color.b = 255;
-            }
-
-            unsigned int index = y * row_size + CHANNELS_PER_PIXEL * x + 1;
-
-            pixel_data[index] = p_color.r; index++;
-            pixel_data[index] = p_color.g; index++;
-            pixel_data[index] = p_color.b; index++;
+            pixel_data[index] = p.p_color.r; index++;
+            pixel_data[index] = p.p_color.g; index++;
+            pixel_data[index] = p.p_color.b; index++;
         }
     }
-
-    FILE* image;
 
     // relative path to the project's working directory: src folder
     const char* path = "pictures\\edited_0.png";

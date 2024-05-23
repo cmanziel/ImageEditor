@@ -220,9 +220,9 @@ void PointBuffer::RemovePoint()
 			// calculate index in the m_ImageData buffer, set p->p_color to the color of the image's pixel, when a point is removed
 			uLong index = (y + 1) + y * (m_WinWidth * CHANNELS_PER_PIXEL) + (x * CHANNELS_PER_PIXEL);
 
-			p->p_color.r = m_ImageData[index];
-			p->p_color.g = m_ImageData[index + 1];
-			p->p_color.b = m_ImageData[index + 2];
+			p->p_color.r = m_ImageData != NULL ? m_ImageData[index] : 255;
+			p->p_color.g = m_ImageData != NULL ? m_ImageData[index + 1] : 255;
+			p->p_color.b = m_ImageData != NULL ? m_ImageData[index + 2] : 255;
 
 			float col[CHANNELS_PER_PIXEL];
 			col[0] = p->p_color.r;
