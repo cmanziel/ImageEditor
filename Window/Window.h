@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include "../PointBuffer.h"
 #include "../Timer/Timer.h"
-#include "pnglib.h"
 
 enum window_state
 {

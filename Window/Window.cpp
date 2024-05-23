@@ -62,7 +62,6 @@ Window::Window(const char* path)
     if (idat_data != NULL)
     {
         free(idat_data);
-        free(image_pixel_data);
     }
 }
 
