@@ -40,4 +40,7 @@ Firstly is checked if the current point (*m_Grid[y][x]*) is draw, if it is then 
 - STATE_ERASE: every frame the PointBuffer class' RemovePoint method is called:
 As in the InsertPoint function the point is checked if inside the brush area boundaries, then if it is already not drawn.
 If both conditions are satisfied the point color is reset to the one of the image pixel at that position.
-The *drawn* flag is set to 0.0 again. The data is finally written to the buffer object's data store at the particular point offset.
+The *drawn* flag is set to 0.0 again. The data is finally written to the buffer object's data store at the particular point offset
+
+## OpenGL side
+- Vertex shader: takes in a vec2 attribute for the position of the point being drawn, a float value flag to determine if the point should be drawn, a vec3 for the point's color, a uniform to set the point's size
