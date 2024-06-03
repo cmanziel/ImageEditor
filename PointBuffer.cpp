@@ -8,6 +8,7 @@ PointBuffer::PointBuffer(Brush* brush, int width, int height, unsigned char* ima
 	glGenBuffers(1, &m_ID);
 	Bind();
 
+	m_ImageData = image_data;
 	m_Grid = (point**)malloc(sizeof(point*) * m_WinHeight);
 
 	if (m_Grid == NULL)
@@ -57,7 +58,7 @@ PointBuffer::PointBuffer(Brush* brush, int width, int height, unsigned char* ima
 			else
 			{
 				// retrieve the pixel data at this point in the grid from the pixel data array. the first y + 1 = 1 byte filter * current row number
-				unsigned int index = (y + 1) + y * (m_WinWidth * CHANNELS_PER_PIXEL) + (x * CHANNELS_PER_PIXEL);
+				uLong index = (y + 1) + y * (m_WinWidth * CHANNELS_PER_PIXEL) + (x * CHANNELS_PER_PIXEL);
 				pix_color.r = image_data[index];
 				pix_color.g = image_data[index + 1];
 				pix_color.b = image_data[index + 2];
@@ -97,6 +98,9 @@ PointBuffer::~PointBuffer()
 
 	// free the "column of pointers"
 	free(m_Grid);
+
+	if(m_ImageData != NULL) // m_ImageData is null if no image was provided or wasn't opened, in this case default white background was used
+		free(m_ImageData); // m_ImageData points to data allocated in the Window constructor where the image's opened
 
 	glDeleteBuffers(1, &m_ID);
 }
@@ -168,10 +172,19 @@ void PointBuffer::InsertPoint()
 
 			point* p = &m_Grid[y][x];
 
+			p->p_color = m_Brush->GetColor();
+
+			float col[CHANNELS_PER_PIXEL];
+
+			col[0] = (float)p->p_color.r;
+			col[1] = (float)p->p_color.g;
+			col[2] = (float)p->p_color.b;
+
 			p->drawn = true;
 
-			float drawn = 1.0;
+			float drawn = 1.0; 
 			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), sizeof(float), (void*)&drawn);
+			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float) + sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
 		}
 	}
 }
@@ -204,12 +217,23 @@ void PointBuffer::RemovePoint()
 
 			point* p = &m_Grid[y][x];
 
-			p->drawn = false;
+			// calculate index in the m_ImageData buffer, set p->p_color to the color of the image's pixel, when a point is removed
+			uLong index = (y + 1) + y * (m_WinWidth * CHANNELS_PER_PIXEL) + (x * CHANNELS_PER_PIXEL);
 
-			//m_PointsDrawn.erase();
+			p->p_color.r = m_ImageData != NULL ? m_ImageData[index] : 255;
+			p->p_color.g = m_ImageData != NULL ? m_ImageData[index + 1] : 255;
+			p->p_color.b = m_ImageData != NULL ? m_ImageData[index + 2] : 255;
+
+			float col[CHANNELS_PER_PIXEL];
+			col[0] = p->p_color.r;
+			col[1] = p->p_color.g;
+			col[2] = p->p_color.b;
+
+			p->drawn = false;
 			
 			float drawn = 0.0;
 			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), sizeof(float), (void*)&drawn);
+			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float) + sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
 		}
 	}
 }

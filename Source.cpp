@@ -5,10 +5,9 @@
 #include "Renderer.h"
 
 /* TODO: increase performance:
-    * work on window resizing and consequently grid resizing
-    
-    * maybe use a list for a one dimensional collection of points
-    * better sorting algorithm for checking if point has already been drawn
+    * too many calls to gl functions
+    * in PointBuffer constructor and Insert/Remove point don't call glBufferSubData for every point, instead every point in an array and do a single call to glBufferSubData with that array
+    * work on window resizing and consequently grid resizing    
 */
 
 /* TODO:
