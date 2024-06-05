@@ -16,7 +16,6 @@ This is done in the Window class' constructor by calling the pnglib's static lib
 In the Window class' constructor the image's width and height are retrieved by the pnglib's functions and are used to create a window of the same dimensions. Then each pixel of the window is given its image counterpart's color value, making the window display the image as its "canvas" onto which the cursor can draw.
 
 This is done by passing the raw image data to the PointBuffer class' constructor. In here a bidimensional array of *point* structures is allocated and a single opengl buffer object is created to hold every value for all the points in the grid.
-size = width * height * VALUES_PER_POINT * sizeof(float); VALUES_PER_POINT is a constant of value 6. 3 rgb values, 2 2D position values, and one flag values to indicate if the point has been drawn or not.
 
 ```
 *point* structure:
@@ -24,6 +23,7 @@ point {
 	float x;
 	float y;
 	unsigned int offset; // value used for overwirting the data for the specific point when calling glBufferSubData
+	bool drawn;
 	color p_color; // color of the point in question: it is the color of the image's pixel or of the default background, unless the point is drawn then it is the color of the brush
 };
 ```
