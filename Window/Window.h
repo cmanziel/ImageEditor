@@ -14,7 +14,7 @@ enum window_state
 class Window
 {
 public:
-	Window(const char* path);
+	Window(char* path);
 	~Window();
 
 	void Update();
@@ -43,6 +43,7 @@ private:
 	unsigned int m_Height;
 
 	FILE* m_Image; // file pointer to the image file currently being edited
+	char* m_Path;
 
 	Brush* m_Brush;
 	PointBuffer* m_PointBuffer;

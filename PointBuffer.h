@@ -9,7 +9,7 @@
 #include "pnglib.h"
 
 
-#define VALUES_PER_POINT 6 // 2 values for coordinates, 3 for color values and 1 for the drawn flag
+#define VALUES_PER_POINT 5 // 2 values for coordinates, 3 for color values
 #define COORDS_PER_POINT 2
 #define GRID_CELL_SIZE 1
 

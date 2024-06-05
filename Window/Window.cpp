@@ -1,13 +1,13 @@
 #include "Window.h"
 
-Window::Window(const char* path)
-    : m_fps(120.0)
+Window::Window(char* path)
+    : m_fps(120.0), m_Path(path), m_State(STATE_INACTIVE)
 {
     // open the image file at "path", extract the compressed data from the idat chunk
 // pass the idat_data to the decompression function, pass the decomoreesed data to PointBuffer
-    unsigned char* idat_data, * image_pixel_data;
 
     m_Image = fopen(path, "rb");
+    unsigned char* idat_data, * image_pixel_data;
 
     if (m_Image == NULL)
     {
@@ -238,8 +238,10 @@ void Window::TakeSnapshot()
         }
     }
 
-    // relative path to the project's working directory: src folder
-    const char* path = "pictures\\edited_0.png";
+    // edit image path appending _edited to its name
+    strcpy(m_Path + strlen(m_Path) - strlen(".png"), "\0");
+
+    const char* path = strcat(m_Path, "_edited.png");
 
     create_image(pixel_data, path, m_Width, m_Height);
 

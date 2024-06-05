@@ -42,5 +42,20 @@ As in the InsertPoint function the point is checked if inside the brush area bou
 If both conditions are satisfied the point color is reset to the one of the image pixel at that position.
 The *drawn* flag is set to 0.0 again. The data is finally written to the buffer object's data store at the particular point offset
 
-## OpenGL side
+## OpenGL side:
 - Vertex shader: takes in a vec2 attribute for the position of the point being drawn, a float value flag to determine if the point should be drawn, a vec3 for the point's color, a uniform to set the point's size
+
+- Fragment Shader: just outputs the color passed as an input by the vertex shader
+
+## Some images from the development:
+Brush not yet implemented. the cursor draws the point at its coordinates relative to the window
+![Just cursor](pictures/drawing.png)
+
+Using a square brush, its dimension is modified by key input:
+![Square brush](pictures/drawing_0.png)
+
+Circular brush whose dimension depends on cursor's speed, default white background:
+![Circular brush, default background](pictures/edited_0.png)
+
+Drawing on an image previously drawn with this application:
+![Drawing on image](pictures/drawing_0_edited.png)
