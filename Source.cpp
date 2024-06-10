@@ -7,6 +7,16 @@
 /* TODO: increase performance:
     * too many calls to gl functions
     * in PointBuffer constructor and Insert/Remove point don't call glBufferSubData for every point, instead every point in an array and do a single call to glBufferSubData with that array
+    * less gl calls: problem in PointBuffer constructor
+        - two different attributes are being updated through glBufferSubData so there are two ways of generating a single array for a single call of glBufferSubData
+        1. save the offset for the point nearer to the buffer start, collect float values of positions and colors in the same array, then call glBufferSubData
+        2. collect position and color data in two different arrays and then call glBufferSubdata on each of them
+        In this case data in the buffer should be arranged and the vertex specification should be done differently:
+        store all the positions' values first and then all the colors' values right after
+
+        Doing first impl.
+        call glBufferSubData for every row of points because they are stored consecutively in the gl buffer
+
     * work on window resizing and consequently grid resizing    
 */
 
@@ -31,8 +41,8 @@ int main(void)
 
     Window* window;
     GLFWwindow* GLFWwin;
-    const char path[100] = "pictures\\drawing_0.png";
-
+    char path[100] = "pictures\\drawing_0.png";
+     
     try
     {
         window = new Window(path);

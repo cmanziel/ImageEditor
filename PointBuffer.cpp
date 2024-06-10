@@ -32,6 +32,12 @@ PointBuffer::PointBuffer(Brush* brush, int width, int height, unsigned char* ima
 	{
 		m_Grid[y] = (point*)malloc(sizeof(point) * m_WinWidth);
 
+		if (m_Grid[y] == NULL)
+		{
+			printf("row not allocated\n");
+			return;
+		}
+
 		for (int x = 0; x < m_WinWidth; x++)
 		{
 			point* p = &m_Grid[y][x];
@@ -69,21 +75,16 @@ PointBuffer::PointBuffer(Brush* brush, int width, int height, unsigned char* ima
 			//p->offset = (y * grid_columns + x) * (COORDS_PER_POINT * sizeof(float) + sizeof(GLboolean));
 			p->offset = (y * m_WinWidth + x) * (VALUES_PER_POINT * sizeof(float));
 
-			float fPoint[COORDS_PER_POINT];
+			float pointData[VALUES_PER_POINT];
 
-			fPoint[0] = p->x;
-			fPoint[1] = p->y;
-			float drawn = 0.0;
+			pointData[0] = p->x;
+			pointData[1] = p->y;
 
-			float col[CHANNELS_PER_PIXEL];
+			pointData[2] = (float)p->p_color.r;
+			pointData[3] = (float)p->p_color.g;
+			pointData[4] = (float)p->p_color.b;
 
-			col[0] = (float)p->p_color.r;
-			col[1] = (float)p->p_color.g;
-			col[2] = (float)p->p_color.b;
-
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset, COORDS_PER_POINT * sizeof(float), fPoint); // buffer every point to the gpu
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), sizeof(float), &drawn); // every point is initially not drawn so buffer GL_FALSE
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float) + sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), col);
+			glBufferSubData(GL_ARRAY_BUFFER, p->offset, VALUES_PER_POINT * sizeof(float), pointData); // buffer every point to the gpu
 		}
 	}
 }
@@ -182,9 +183,7 @@ void PointBuffer::InsertPoint()
 
 			p->drawn = true;
 
-			float drawn = 1.0; 
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), sizeof(float), (void*)&drawn);
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float) + sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
+			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
 		}
 	}
 }
@@ -230,10 +229,8 @@ void PointBuffer::RemovePoint()
 			col[2] = p->p_color.b;
 
 			p->drawn = false;
-			
-			float drawn = 0.0;
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), sizeof(float), (void*)&drawn);
-			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float) + sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
+
+			glBufferSubData(GL_ARRAY_BUFFER, p->offset + COORDS_PER_POINT * sizeof(float), CHANNELS_PER_PIXEL * sizeof(float), (void*)col);
 		}
 	}
 }
