@@ -60,4 +60,4 @@ Circular brush whose dimension depends on the cursor's speed, default white back
 
 Drawing on an image previously generated with this application:
 ![Drawing on image](pictures/collage.png)
-![Drawing on image](pictures/drawing_0_edited.png)
+<!-- ![Drawing on image](pictures/drawing_0_edited.png) -->
