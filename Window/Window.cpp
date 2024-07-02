@@ -21,8 +21,7 @@ Window::Window(char* path)
         m_Width = image_get_width(m_Image);
         m_Height = image_get_height(m_Image);
 
-        idat_data = image_get_IDAT_data(m_Image);
-        image_pixel_data = decomp(idat_data, image_get_size(m_Image), image_get_IDAT_size(m_Image));
+        image_pixel_data = decompress_image(m_Image);
     }
 
     /* Initialize the library */
@@ -59,10 +58,8 @@ Window::Window(char* path)
     m_Brush = new Brush(xPos, yPos, m_Timer.GetTimeMilliseconds());
     m_PointBuffer = new PointBuffer(m_Brush, m_Width, m_Height, image_pixel_data);
 
-    if (idat_data != NULL)
-    {
-        free(idat_data);
-    }
+    if(m_Image != NULL)
+        fclose(m_Image);
 }
 
 Window::~Window()
@@ -82,8 +79,8 @@ void Window::Update()
     long time = m_Timer.GetTimeMilliseconds();
 
     // lock window input handling and point insertion/removal to 60fps
-    if (time - m_Timer.m_LastTime < 1000.0 / m_fps)
-        return;
+    //if (time - m_Timer.m_LastTime < 1000.0 / m_fps)
+    //    return;
 
     WindowResize();
     CursorMovement();
@@ -136,12 +133,14 @@ void Window::KeyCallback(int key, int scancode, int action, int mods)
             m_Brush->ChangeState(STATE_DRAW);
         else if (key == GLFW_KEY_E)
             m_Brush->ChangeState(STATE_ERASE);
-        //else if (key == GLFW_KEY_UP)
-        //    m_Brush->SetRadius(+1);
-        //else if (key == GLFW_KEY_DOWN)
-        //    m_Brush->SetRadius(-1);
-/*        else */if (key == GLFW_KEY_P)
+        else if (key == GLFW_KEY_UP)
+            m_Brush->SetRadius(+1);
+        else if (key == GLFW_KEY_DOWN)
+            m_Brush->SetRadius(-1);
+        else if (key == GLFW_KEY_P)
             TakeSnapshot();
+        else if (key == GLFW_KEY_V)
+            m_Brush->ToggleSpeedMode();
     }
 }
 

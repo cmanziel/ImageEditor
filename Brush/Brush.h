@@ -23,7 +23,7 @@ enum brush_state
 	STATE_DRAW, STATE_ERASE, STATE_INACTIVE
 };
 
-#define DELTA_AREA_RADIUS 75
+#define DELTA_AREA_RADIUS 50
 // could also be static class
 class Brush
 {
@@ -37,11 +37,13 @@ public:
 	void ChangeState(uint8_t state);
 	uint8_t GetState();
 
+	void ToggleSpeedMode();
+
 	int GetRadius();
 	//void SetRadius(int mod);
 
 	// delta milliseconds as argument
-	void SetRadius();
+	void SetRadius(int mod);
 
 	color GetColor();
 
@@ -56,6 +58,7 @@ private:
 	int m_DeltaAreaRadius;
 	long m_DeltaStartTime; // time in milliseconds when the DeltaArea was escaped
 
+	bool m_SpeedMode;
 	//cursor m_Velocity;
 	//cursor m_LastVelocity;
 
