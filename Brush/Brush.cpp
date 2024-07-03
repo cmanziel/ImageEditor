@@ -3,7 +3,7 @@
 float vector_length(cursor v);
 
 Brush::Brush(double cursor_x, double cursor_y, long time)
-	: m_State(STATE_INACTIVE)
+	: m_State(STATE_INACTIVE), m_SpeedMode(false)
 {
 	m_Cursor.x = cursor_x;
 	m_Cursor.y = cursor_y;
@@ -19,8 +19,8 @@ Brush::Brush(double cursor_x, double cursor_y, long time)
 	m_Radius = 0;
 
 	//start with red color
-	m_Color.r = 0;
-	m_Color.g = 0;
+	m_Color.r = 255;
+	m_Color.g = 255;
 	m_Color.b = 255;
 }
 
@@ -43,6 +43,9 @@ void Brush::SetCursorPos(double xPos, double yPos, long time)
 	deltaPos.x = m_Cursor.x - m_DeltaAreaCenter.x;
 	deltaPos.y = m_Cursor.y - m_DeltaAreaCenter.y;
 
+	if (!m_SpeedMode)
+		return;
+
 	if(vector_length(deltaPos) > m_DeltaAreaRadius)
 	{
 		// set new delta area center, calculate velocity
@@ -50,12 +53,19 @@ void Brush::SetCursorPos(double xPos, double yPos, long time)
 
 		m_Velocity = vector_length(deltaPos) / timeElapsed;
 
-		SetRadius();
+		SetRadius(0);
 
 		m_DeltaAreaCenter = m_Cursor;
 		m_DeltaStartTime = time;
 		m_LastVelocity = m_Velocity;
 	}
+}
+
+void Brush::ToggleSpeedMode()
+{
+	m_SpeedMode = !m_SpeedMode;
+
+	printf("%d\n", m_SpeedMode);
 }
 
 int Brush::GetRadius()
@@ -68,7 +78,7 @@ int Brush::GetRadius()
 //	m_Radius = m_Radius == 0 && mod < 0 ? m_Radius : m_Radius + mod;
 //}
 
-void Brush::SetRadius()
+void Brush::SetRadius(int mod)
 {
 	//float delta_velocity = vector_length(m_Velocity) - vector_length(m_LastVelocity);
 	//float delta_velocity = m_Velocity - m_LastVelocity;
@@ -77,7 +87,10 @@ void Brush::SetRadius()
 
 	//m_Radius = m_Radius + scaling_factor < 0 ? 0 : m_Radius + scaling_factor;
 
-	m_Radius = m_Velocity * 20 > 150 ? 150 : m_Velocity * 20;
+	if (m_SpeedMode)
+		m_Radius = m_Velocity * 20 > 150 ? 150 : m_Velocity * 20;
+	else
+		m_Radius += mod;
 }
 
 color Brush::GetColor()
